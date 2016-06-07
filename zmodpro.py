@@ -1,12 +1,8 @@
 from __future__ import print_function
-import sys
-import os
-import platform
-import shutil
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import os
 import flopy
 import flopy.utils.binaryfile as bf
 import modelz as zm

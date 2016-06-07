@@ -8,10 +8,11 @@ import flopy
 import flopy.utils.binaryfile as bf
 from matplotlib.colors import BoundaryNorm
 
+
 __author__ = 'stanko'
 
 mod_nam = '2D_06'
-mod_type = 'pod'
+mod_type = 'pod-deim'
 w_dir = os.getcwd()
 sim_dir = os.path.join('..', 'model', mod_nam)
 res_dir = os.path.join(sim_dir, '_result')
@@ -83,8 +84,8 @@ zh2mx_loc = np.unravel_index(np.argmax(zh2), zh2.shape)
 xy_loc = np.unravel_index(np.argmax(zh2), (nts, nx, ny))
 zh2_n = zh2.size
 zh2_rmse = np.linalg.norm(zh2) / np.sqrt(zh2_n)
-zh2_rmse_xy = np.linalg.norm(zh2,axis=0) / np.sqrt(zh2_n)
-zh2_rmse_t = np.linalg.norm(zh2,axis=1) / np.sqrt(zh2_n)
+zh2_rmse_xy = np.linalg.norm(zh2, axis=0) / np.sqrt(zh2_n)
+zh2_rmse_t = np.linalg.norm(zh2, axis=1) / np.sqrt(zh2_n)
 zh2_nrmse = zh2_rmse/zh2_max
 zh2_nrmse_xy = zh2_rmse_xy/zh2_max
 zh2_nrmse_t = zh2_rmse_t/zh2_max
@@ -151,7 +152,7 @@ fil_nam = 'basis_Ah.txt'
 f = open(os.path.join(mo_dir, fil_nam), 'rb')
 basis_Ah = np.genfromtxt(f, skip_header=1)
 didx = basis_Ah[0, ]
-didx = [int (z) for z in didx]
+didx = [int(z) for z in didx]
 print(' ... done')
 
 zA = np.abs(ss_Ah - ss_Ahr)
@@ -191,9 +192,9 @@ Y = np.arange(0, ny, 1)
 cmap = plt.get_cmap('Greys')
 
 # Plot POD Model first
-norm = mpl.colors.Normalize(vmin=zh_nrmse_xy.min(), vmax=zh_nrmse_xy.max())
 
-print('plot POD NRMSE for head over all time for each cell ... ')
+norm = mpl.colors.Normalize(vmin=zh_nrmse_xy.min(), vmax=zh_nrmse_xy.max())
+print('plot {} NRMSE for head over all time for each cell ... '.format(mod_type))
 z_grid = (zh_nrmse_xy.reshape(nx, ny))
 fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(1, 1, 1, aspect='equal')
@@ -205,8 +206,8 @@ plt.xlabel('Column', fontsize=12)
 plt.ylabel('Row', fontsize=12)
 cb = fig.colorbar(im, ax=ax, shrink=0.9)
 cb.set_label('NRMSE', fontsize=12)
-plt.savefig(os.path.join(fig_dir, 'POD_head_err_nrmse.png'), bbox_inches='tight')
-plt.savefig(os.path.join(pdf_dir, 'POD_head_err_nrmse.pdf'), bbox_inches='tight')
+plt.savefig(os.path.join(fig_dir, '2d_err_{}.png'.format(mod_type)), bbox_inches='tight')
+plt.savefig(os.path.join(pdf_dir, '2d_err_{}.pdf'.format(mod_type)), bbox_inches='tight')
 print(' ... done \n')
 plt.close()
 
