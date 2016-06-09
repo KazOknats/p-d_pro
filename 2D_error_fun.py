@@ -11,8 +11,8 @@ import modelz as zm
 
 __author__ = 'stanko'
 
-mod_nam = '2D_06'
-mod_type = 'pod-deim'
+mod_nam = '2D_07'
+mod_type = 'pod_r56'
 w_dir = os.getcwd()
 sim_dir = os.path.join('..', 'model', mod_nam)
 res_dir = os.path.join(sim_dir, '_result')
@@ -26,6 +26,20 @@ pdf_dir = os.path.join(fig_dir, '_pdf')
 if not os.path.exists(pdf_dir):
     os.mkdir(pdf_dir)
 
+mo_dir = os.path.join(res_dir, 'pod')
+# import the snapshots of h
+print('importing snapshots ... ')
+fil_nam = 'SnapShots_h.txt'
+f = open(os.path.join(mo_dir, fil_nam), 'rb')
+ss_hp = np.genfromtxt(f, skip_header=1)
+
+fil_nam = 'SnapShotsR.txt'
+f = open(os.path.join(mo_dir, fil_nam), 'rb')
+ss_hrp = np.genfromtxt(f, skip_header=1)
+print(' ... done')
+
+
+mo_dir = os.path.join(res_dir, 'pod-deim')
 # import the snapshots of h
 print('importing snapshots ... ')
 fil_nam = 'SnapShots_h.txt'
@@ -72,13 +86,16 @@ X = np.arange(0, nx, 1)
 Y = np.arange(0, ny, 1)
 cmap = plt.get_cmap('Greys')
 
+zhp = zm.Zrez(nts, nx, ny, ss_hp, ss_hrp)
+plot_2d_nrmse(mod_nam, 'POD', 'h', X, Y, zhp.nrmse_xy, 6, 6, 12)
+plt.close()
 # zh = zm.Zmode(nx, ny, nz, nsp, nts, nss, )
 zh = zm.Zrez(nts, nx, ny, ss_h, ss_hr)
-plot_2d_nrmse(mod_nam, mod_type, 'h', X, Y, zh.nrmse_xy, 6, 6, 12, didx)
+plot_2d_nrmse(mod_nam, 'POD-DEIM', 'h', X, Y, zh.nrmse_xy, 6, 6, 12, didx)
 plt.close()
 #plt.clf()
 zA = zm.Zrez(nts, nx, ny, ss_Ah, ss_Ahr)
-plot_2d_nrmse(mod_nam, mod_type, 'Ah', X, Y, zA.nrmse_xy, 6, 6, 12, didx)
+plot_2d_nrmse(mod_nam, 'POD-DEIM', 'Ah', X, Y, zA.nrmse_xy, 6, 6, 12, didx)
 plt.close()
 
 
@@ -140,18 +157,33 @@ xex = a / DIV
 
 fig = plt.figure(figsize=(8, 5))
 ax = fig.add_subplot(111)
-RMSE = -np.sort(-zh.rmse_t)
+RMSE = -np.sort(-zhp.rmse_t)
 plt.plot(xex, 100. * RMSE, 'b', lw=3, ls='-', alpha=0.4, label='POD')
-RMSE2 = -np.sort(-zh2.rmse_t)
-plt.plot(xex, 100. * RMSE2, 'darkred', ls='--', lw=2, label='POD-DEIM(40)')
-#ax.axis([0., 100,10, 3000])
-#xticks( range(1,35,4) )
-RMSE3 = -np.sort(-zh3.rmse_t)
-plt.plot(xex, 100. * RMSE3, 'k', ls='-', lw=.75, label='POD-DEIM(30)')
+RMSE2 = -np.sort(-zh.rmse_t)
+plt.plot(xex, 100. * RMSE2, 'darkred', ls='--', lw=2, label='POD-DEIM(64)')
+# ax.axis([0., 100,10, 3000])
+# xticks( range(1,35,4) )
+# RMSE3 = -np.sort(-zh3.rmse_t)
+# plt.plot(xex, 100. * RMSE3, 'k', ls='-', lw=.75, label='POD-DEIM(30)')
 plt.xlabel('Excedence [%]', fontsize=12)
 plt.ylabel('RMSE [cm]', fontsize=12)
 plt.legend(loc='upper right')
 plt.savefig(os.path.join(fig_dir, 'h_exede_{}.png'.format(mod_nam)))
 plt.close()
+
+
+MAE = sum(zh.T, 0) / float(nts)
+plt.clf()
+fig = plt.figure(figsize=(8, 8))
+ax1 = fig.add_subplot(111)
+ax1.plot(np.arange(nts), zh2[:, 6715] * 100, 'k', lw=2, label='Head Error [row 67 column 82]')
+ax2 = ax1.twinx()
+ax2.plot(np.arange(nts), MAE, 'r', lw=1.5, label='MAE')
+ax1.set_xlabel('Time [Days]', fontsize=12)
+ax1.set_ylabel('Absolute error [cm]', fontsize=12)
+ax2.set_ylabel('Mean Average Error', fontsize=12)
+ax1.legend(loc='upper left')
+ax2.legend()
+plt.savefig(os.path.join(fig_dir, '2_errors.png'))
 
 plt.close('all')

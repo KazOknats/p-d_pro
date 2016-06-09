@@ -3,9 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import os
-import flopy
-import flopy.utils.binaryfile as bf
-import modelz as zm
 __author__ = 'stanko'
 
 
@@ -45,6 +42,7 @@ class Zmode(object):
 class Zrez(object):
     def __init__(self, nts, nx, ny, ss_h, ss_hr):
         zer = np.abs(ss_h - ss_hr)
+        self.err = zer
         self.hr_min = ss_hr.min()
         self.h_min = ss_h.min()
         self.h_max = ss_h.max()
@@ -67,9 +65,10 @@ class Zrez(object):
         info3 = ' min head (red): {}\n'.format(self.hr_min)
         info4 = ' size: {}\n shape: {}\n'.format(self.e_n, self.e_shape)
         info5 = ' min, max: {}, {}\n'.format(self.e_min, self.e_max)
-        info6 = ' max loc: {}, max loc (t,x,y): {}\n'.format(self.emx_loc, self.xy_loc)
-        info7 = ' AVG RMSE: {}\n NRMSE: {}'.format(self.rmse_avg, self.nrmse)
-        return info1 + info2 + info3 + info4 + info5 + info6 + info7 + '\n'
+        info6 = ' max loc (t, rowcol): {}\n'.format(self.emx_loc)
+        info7 = ' max loc (t,row,col): {}\n'.format( self.xy_loc)
+        info8 = ' AVG RMSE: {}\n NRMSE: {}'.format(self.rmse_avg, self.nrmse)
+        return info1 + info2 + info3 + info4 + info5 + info6 + info7 + info8 + '\n'
 
 
 def plot_2d_nrmse(nam, typ, x, y, z, sx, sy, sf):
