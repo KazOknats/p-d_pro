@@ -15,7 +15,7 @@ def elapsed():
 
 # mod_nam = '2D_unconfined_03'
 mod_nam = '1D_02'
-mod_type = 'pod-deim'
+mod_type = 'pod'
 w_dir = os.getcwd()
 fil_dir = os.path.join('..', 'model', mod_nam)
 res_dir = os.path.join(fil_dir, '_result')
@@ -95,7 +95,7 @@ plt.rcParams.update(newparams)
 fig = plt.figure(figsize=(10, 5))
 
 ax1 = fig.add_subplot(1, 2, 1)
-ax1.set_title('POD-DEIM Reduced Model Error \n', fontsize=14)
+ax1.set_title('{} Reduced Model Error \n'.format(mod_type), fontsize=14)
 im = ax1.pcolormesh(X, Y, zh[:, :] * 100.0, cmap='Greys', norm=norm)
 ax1.set_xlim(X.min(), X.max())
 ax1.set_ylim(Y.min(), Y.max())
@@ -108,7 +108,7 @@ ax2 = fig.add_subplot(2, 2, 2)
 # ax2.set_title('Time = 61 Days', fontsize=14)
 xs = flopy.plot.ModelCrossSection(model=mf, line={'row': 0})
 wt = xs.plot_surface(rec1, masked_values=[999.], color='blue', lw=1, label='Full, 61 days', alpha=0.5)
-wt = xs.plot_surface(rec2, masked_values=[999.], color='black', lw=2, ls='--', label='POD, 61 days')
+wt = xs.plot_surface(rec2, masked_values=[999.], color='black', lw=2, ls='--', label='Reduced, 61 days')
 ax2.yaxis.tick_right()
 ax2.yaxis.set_label_position("right")
 ax2.set_ylabel('Hydraulic Head (m)', fontsize=12)
@@ -118,7 +118,7 @@ ax3 = fig.add_subplot(2, 2, 4)
 # ax3.set_title('Time = 33 Days', fontsize=14)
 xs = flopy.plot.ModelCrossSection(model=mf, line={'row': 0})
 wt = xs.plot_surface(rec1_2, masked_values=[999.], color='blue', lw=1, label='Full, 33 days', alpha=0.5)
-wt = xs.plot_surface(rec2_2, masked_values=[999.], color='black', lw=2, ls='--', label='POD, 33 days')
+wt = xs.plot_surface(rec2_2, masked_values=[999.], color='black', lw=2, ls='--', label='Reduced, 33 days')
 ax3.set_xlabel('Horizontal Distance (m)', fontsize=12)
 ax3.yaxis.tick_right()
 ax3.yaxis.set_label_position("right")
